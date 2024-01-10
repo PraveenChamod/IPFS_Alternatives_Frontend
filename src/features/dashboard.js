@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { uploadFileToDolpin, uploadFileToCloudinary, uploadFileToPinata, uploadFileToStarton } from '../api';
+import { uploadFile } from '../api';
 
 const FileUploadForm = () => {
     const [selectedStorage, setSelectedStorage] = useState([]);
@@ -33,53 +33,17 @@ const FileUploadForm = () => {
             return;
         }
 
-        const isDolpinSelected = selectedStorage.some(option => option.value === 'Dolpin');
-        const isCloudinarySelected = selectedStorage.some(option => option.value === 'Cloudinary');
-        const isPinataSelected = selectedStorage.some(option => option.value === 'Pinata');
-        const isStartonSelected = selectedStorage.some(option => option.value === 'Starton');
-
         try {
-            if (isDolpinSelected) {
-                const formData = new FormData();
-                formData.append('files', selectedFiles[0]);
-                const response = await uploadFileToDolpin(formData);
-                if (response.status === 200) {
-                    toast.success('File uploaded successfully to dolpin!');
-                } else {
-                    toast.error('Error uploading file to dolpin.');
-                }
-            }
 
-            if (isCloudinarySelected) {
+            if(selectedStorage.length !== 0){
                 const formData = new FormData();
                 formData.append('file', selectedFiles[0]);
-                const response = await uploadFileToCloudinary(formData);
+                formData.append('selectedStorages', JSON.stringify(selectedStorage));
+                const response = await uploadFile(formData);
                 if (response.status === 200) {
-                    toast.success('File uploaded successfully to cloudinary!');
+                    toast.success('File uploaded successfully!');
                 } else {
-                    toast.error('Error uploading file to cloudinary.');
-                }
-            }
-
-            if (isPinataSelected) {
-                const formData = new FormData();
-                formData.append('file', selectedFiles[0]);
-                const response = await uploadFileToPinata(formData);
-                if (response.status === 200) {
-                    toast.success('File uploaded successfully to pinata!');
-                } else {
-                    toast.error('Error uploading file to pinata.');
-                }
-            }
-
-            if (isStartonSelected) {
-                const formData = new FormData();
-                formData.append('file', selectedFiles[0]);
-                const response = await uploadFileToStarton(formData);
-                if (response.status === 200) {
-                    toast.success('File uploaded successfully to starton!');
-                } else {
-                    toast.error('Error uploading file to starton.');
+                    toast.error('Error uploading file.');
                 }
             }
         } catch (error) {
